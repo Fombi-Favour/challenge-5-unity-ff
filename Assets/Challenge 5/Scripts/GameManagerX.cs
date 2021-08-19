@@ -16,7 +16,7 @@ public class GameManagerX : MonoBehaviour
     public List<GameObject> targetPrefabs;
 
     private int score;
-    private int time = 60;
+    public float timeRemaining = 60;
     private float spawnRate = 1.5f;
     public bool isGameActive;
 
@@ -31,7 +31,7 @@ public class GameManagerX : MonoBehaviour
         StartCoroutine(SpawnTarget());
         score = 0;
         UpdateScore(0);
-        UpdateTime(1);
+        timer();
         titleScreen.SetActive(false);
         spawnRate /= difficulty;
     }
@@ -90,11 +90,17 @@ public class GameManagerX : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void UpdateTime(int timeToAdd)
+    public void timer()
     {
-        time -= timeToAdd;
-        timeText.text = "Time: " + time;
-        
+        if(timeRemaining > 0)
+        {
+            timeRemaining -= Time.deltaTime;
+        }
+
+        else
+        {
+            GameOver();
+        }
     }
 
 }
