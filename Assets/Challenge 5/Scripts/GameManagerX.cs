@@ -16,8 +16,9 @@ public class GameManagerX : MonoBehaviour
     public List<GameObject> targetPrefabs;
 
     private int score;
-    public float timeRemaining = 60;
+    public int secondsLeft;
     private float spawnRate = 1.5f;
+    public bool takingAway = false;
     public bool isGameActive;
 
     private float spaceBetweenSquares = 2.5f; 
@@ -30,10 +31,18 @@ public class GameManagerX : MonoBehaviour
         isGameActive = true;
         StartCoroutine(SpawnTarget());
         score = 0;
+        secondsLeft = 61;
         UpdateScore(0);
-        timer();
         titleScreen.SetActive(false);
         spawnRate /= difficulty;
+    }
+
+    void Update()
+    {
+        if (takingAway == false && secondsLeft > 0)
+        {
+            StartCoroutine(TimeTake());
+        }
     }
 
     // While game is active spawn a random target
@@ -50,6 +59,28 @@ public class GameManagerX : MonoBehaviour
             }
             
         }
+    }
+
+    //Generate a timer for 60 seconds
+    IEnumerator TimeTake()
+    {
+        takingAway = true;
+        yield return new WaitForSeconds(1);
+        secondsLeft -= 1;
+        if (secondsLeft < 10)
+        {
+            timeText.text = "Time: 0" + secondsLeft;
+        }
+        else
+        {
+            timeText.text = "Time: " + secondsLeft;
+        }
+        if(secondsLeft == 0)
+        {
+            GameOver();
+        }
+
+        takingAway = false;
     }
 
     // Generate a random spawn position based on a random index from 0 to 3
@@ -88,19 +119,6 @@ public class GameManagerX : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void timer()
-    {
-        if(timeRemaining > 0)
-        {
-            timeRemaining -= Time.deltaTime;
-        }
-
-        else
-        {
-            GameOver();
-        }
     }
 
 }
